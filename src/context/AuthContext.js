@@ -41,10 +41,12 @@ export const AuthProvider = ({ children }) => {
         .from('usuarios')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error al obtener perfil:', error.message);
+      } else if (!data) {
+        console.warn('No existe un registro en la tabla "usuarios" para el ID:', userId);
       } else {
         setUser(data);
         setUserRole(data?.rol); // 'director', 'profesor', 'porteria'
