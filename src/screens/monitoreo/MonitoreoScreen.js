@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-import React, { useContext } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { AuthContext } from '../../context/AuthContext';
-
-export default function MonitoreoScreen() {
-  const { logout } = useContext(AuthContext);
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Panel de Monitoreo (Puerta)</Text>
-      <Button title="Cerrar Sesión" onPress={logout} />
-=======
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
@@ -34,7 +22,7 @@ export default function MonitoreoScreen() {
     cargarDatos();
   }, []);
 
-  // carga datos
+  // Carga inicial de cursos
   const cargarDatos = async () => {
     try {
       setLoading(true);
@@ -64,7 +52,7 @@ export default function MonitoreoScreen() {
     }
   };
 
-  // elige curso
+  // Selección de curso
   const seleccionarCurso = async (curso) => {
     if (!curso) return;
 
@@ -83,11 +71,10 @@ export default function MonitoreoScreen() {
     }
 
     setAlumnos(alumnosData || []);
-
     await cargarAsistencia(curso.id, alumnosData || []);
   };
 
-  // carga asistencia
+  // Carga de asistencias del día actual
   const cargarAsistencia = async (cursoId, alumnosCurso) => {
     try {
       const hoy = new Date().toISOString().split('T')[0];
@@ -123,7 +110,7 @@ export default function MonitoreoScreen() {
     }
   };
 
-  // actualiza
+  // Refrescar estado actual
   const actualizarMonitoreo = async () => {
     if (!selectedCurso) return;
 
@@ -139,7 +126,6 @@ export default function MonitoreoScreen() {
       if (error) throw error;
 
       setAlumnos(alumnosData || []);
-
       await cargarAsistencia(selectedCurso.id, alumnosData || []);
     } catch (error) {
       console.error('Error actualizando:', error);
@@ -149,7 +135,7 @@ export default function MonitoreoScreen() {
     }
   };
 
-  // cierra sesion
+  // Cerrar sesión
   const cerrarSesion = async () => {
     const { error } = await supabase.auth.signOut();
 
@@ -159,7 +145,7 @@ export default function MonitoreoScreen() {
     }
   };
 
-  // estadisticas
+  // Cálculos estadísticos
   const cantidadPresentes = alumnos.filter(
     (alumno) => asistencias[alumno.id] === 'presente'
   ).length;
@@ -180,7 +166,7 @@ export default function MonitoreoScreen() {
     (alumno) => asistencias[alumno.id] === undefined
   ).length;
 
-  // estado
+  // Formato de badge de estado
   const obtenerTextoEstado = (estado) => {
     switch (estado) {
       case 'presente':
@@ -209,7 +195,7 @@ export default function MonitoreoScreen() {
 
   return (
     <View style={styles.container}>
-      {/* header */}
+      {/* Header */}
       <View style={styles.header}>
         <View>
           <Text style={styles.headerTitle}>Presentismo Hernández</Text>
@@ -237,7 +223,7 @@ export default function MonitoreoScreen() {
       </View>
 
       <View style={styles.mainLayout}>
-        {/* cursos */}
+        {/* Sidebar Cursos */}
         <View style={styles.sidebar}>
           <Text style={styles.sidebarTitle}>Cursos</Text>
 
@@ -277,30 +263,27 @@ export default function MonitoreoScreen() {
           </ScrollView>
         </View>
 
-        {/* contenido */}
+        {/* Contenido Principal */}
         <View style={styles.contentArea}>
           {!selectedCurso ? (
             <View style={styles.noCourse}>
               <Text style={styles.noCourseIcon}>🛡️</Text>
-
               <Text style={styles.noCourseTitle}>
                 Seleccione un curso
               </Text>
-
               <Text style={styles.noCourseText}>
                 Seleccione un curso para comenzar el monitoreo.
               </Text>
             </View>
           ) : (
             <View style={styles.monitoringArea}>
-              {/* curso */}
+              {/* Encabezado del Curso */}
               <View style={styles.courseHeader}>
                 <View>
                   <Text style={styles.courseTitle}>
                     {selectedCurso.anio}º {selectedCurso.division}{' '}
                     {selectedCurso.especialidad}
                   </Text>
-
                   <Text style={styles.courseSubtitle}>
                     Monitoreo de asistencia
                   </Text>
@@ -313,7 +296,7 @@ export default function MonitoreoScreen() {
                 </View>
               </View>
 
-              {/* aviso */}
+              {/* Aviso de Retirados */}
               {cantidadRetirados > 0 && (
                 <View style={styles.warningBox}>
                   <View style={styles.warningIconContainer}>
@@ -324,7 +307,6 @@ export default function MonitoreoScreen() {
                     <Text style={styles.warningTitle}>
                       Alumnos retirados
                     </Text>
-
                     <Text style={styles.warningText}>
                       Hay {cantidadRetirados} alumno
                       {cantidadRetirados !== 1 ? 's' : ''} registrado
@@ -335,7 +317,7 @@ export default function MonitoreoScreen() {
                 </View>
               )}
 
-              {/* estadisticas */}
+              {/* Estadísticas en Tarjetas */}
               <View style={styles.statsRow}>
                 <View style={styles.statCard}>
                   <Text style={styles.statNumber}>{alumnos.length}</Text>
@@ -370,14 +352,13 @@ export default function MonitoreoScreen() {
                 </View>
               </View>
 
-              {/* lista */}
+              {/* Lista de Alumnos */}
               <View style={styles.listContainer}>
                 <View style={styles.listHeader}>
                   <View>
                     <Text style={styles.listTitle}>
                       Estado de los alumnos
                     </Text>
-
                     <Text style={styles.listSubtitle}>
                       Información registrada por los profesores
                     </Text>
@@ -392,7 +373,6 @@ export default function MonitoreoScreen() {
                   {alumnos.length === 0 ? (
                     <View style={styles.emptyStudents}>
                       <Text style={styles.emptyStudentsIcon}>👥</Text>
-
                       <Text style={styles.emptyStudentsText}>
                         No hay alumnos registrados en este curso.
                       </Text>
@@ -406,14 +386,10 @@ export default function MonitoreoScreen() {
                           key={alumno.id}
                           style={[
                             styles.studentRow,
-                            estado === 'presente' &&
-                              styles.studentPresent,
-                            estado === 'ausente' &&
-                              styles.studentAbsent,
-                            estado === 'tarde' &&
-                              styles.studentLate,
-                            estado === 'se_retiro' &&
-                              styles.studentLeft,
+                            estado === 'presente' && styles.studentPresent,
+                            estado === 'ausente' && styles.studentAbsent,
+                            estado === 'tarde' && styles.studentLate,
+                            estado === 'se_retiro' && styles.studentLeft,
                             !estado && styles.studentPending
                           ]}
                         >
@@ -428,7 +404,6 @@ export default function MonitoreoScreen() {
                               <Text style={styles.studentName}>
                                 {alumno.apellido}, {alumno.nombre}
                               </Text>
-
                               <Text style={styles.studentDni}>
                                 DNI: {alumno.dni || 'Sin registrar'}
                               </Text>
@@ -438,28 +413,20 @@ export default function MonitoreoScreen() {
                           <View
                             style={[
                               styles.statusBadge,
-                              estado === 'presente' &&
-                                styles.statusPresent,
-                              estado === 'ausente' &&
-                                styles.statusAbsent,
-                              estado === 'tarde' &&
-                                styles.statusLate,
-                              estado === 'se_retiro' &&
-                                styles.statusLeft,
+                              estado === 'presente' && styles.statusPresent,
+                              estado === 'ausente' && styles.statusAbsent,
+                              estado === 'tarde' && styles.statusLate,
+                              estado === 'se_retiro' && styles.statusLeft,
                               !estado && styles.statusPending
                             ]}
                           >
                             <Text
                               style={[
                                 styles.statusText,
-                                estado === 'presente' &&
-                                  styles.statusTextLight,
-                                estado === 'ausente' &&
-                                  styles.statusTextLight,
-                                estado === 'tarde' &&
-                                  styles.statusTextDark,
-                                estado === 'se_retiro' &&
-                                  styles.statusTextLight
+                                estado === 'presente' && styles.statusTextLight,
+                                estado === 'ausente' && styles.statusTextLight,
+                                estado === 'tarde' && styles.statusTextDark,
+                                estado === 'se_retiro' && styles.statusTextLight
                               ]}
                             >
                               {obtenerTextoEstado(estado)}
@@ -475,22 +442,15 @@ export default function MonitoreoScreen() {
           )}
         </View>
       </View>
->>>>>>> master
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
-  text: { fontSize: 20, fontWeight: 'bold', marginBottom: 20 }
-=======
   container: {
     flex: 1,
     backgroundColor: '#f8fafc'
   },
-
-  // header
   header: {
     height: 80,
     backgroundColor: '#1e1b4b',
@@ -499,60 +459,49 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between'
   },
-
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8
   },
-
   headerTitle: {
     color: '#fff',
     fontSize: 22,
     fontWeight: 'bold'
   },
-
   headerSubtitle: {
     color: '#c7d2fe',
     fontSize: 13,
     marginTop: 3
   },
-
   logoutButton: {
     backgroundColor: '#dc2626',
     paddingHorizontal: 15,
     paddingVertical: 9,
     borderRadius: 7
   },
-
   logoutText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 12
   },
-
   refreshButton: {
     backgroundColor: '#4f46e5',
     paddingHorizontal: 15,
     paddingVertical: 9,
     borderRadius: 7
   },
-
   refreshText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 12
   },
-
-  // layout
   mainLayout: {
     flex: 1,
     flexDirection: 'row',
     padding: 15,
     gap: 15
   },
-
-  // cursos
   sidebar: {
     width: 210,
     backgroundColor: '#fff',
@@ -561,59 +510,47 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e2e8f0'
   },
-
   sidebarTitle: {
     fontSize: 17,
     fontWeight: 'bold',
     color: '#0f172a',
     marginBottom: 12
   },
-
   cursoCard: {
     borderRadius: 10,
     padding: 12,
     marginBottom: 10
   },
-
   cursoCardSelected: {
     backgroundColor: '#eab308'
   },
-
   cursoCardUnselected: {
     backgroundColor: '#818cf8'
   },
-
   cursoTitle: {
     color: '#fff',
     fontSize: 15,
     fontWeight: 'bold'
   },
-
   cursoEspecialidad: {
     color: '#fff',
     fontSize: 12,
     marginTop: 2
   },
-
   emptySidebar: {
     padding: 10
   },
-
   emptySidebarText: {
     color: '#64748b',
     fontSize: 12,
     fontStyle: 'italic'
   },
-
-  // contenido
   contentArea: {
     flex: 1
   },
-
   monitoringArea: {
     flex: 1
   },
-
   noCourse: {
     flex: 1,
     backgroundColor: '#fff',
@@ -624,25 +561,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e2e8f0'
   },
-
   noCourseIcon: {
     fontSize: 45,
     marginBottom: 12
   },
-
   noCourseTitle: {
     fontSize: 23,
     fontWeight: 'bold',
     color: '#0f172a'
   },
-
   noCourseText: {
     color: '#64748b',
     marginTop: 7,
     textAlign: 'center'
   },
-
-  // curso
   courseHeader: {
     backgroundColor: '#c7d2fe',
     borderRadius: 16,
@@ -654,33 +586,27 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 12
   },
-
   courseTitle: {
     fontSize: 25,
     fontWeight: 'bold',
     color: '#1e1b4b'
   },
-
   courseSubtitle: {
     color: '#334155',
     marginTop: 3,
     fontSize: 13
   },
-
   dateBadge: {
     backgroundColor: '#1e293b',
     paddingHorizontal: 12,
     paddingVertical: 7,
     borderRadius: 8
   },
-
   dateText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 12
   },
-
-  // aviso
   warningBox: {
     backgroundColor: '#eef2ff',
     borderWidth: 1,
@@ -691,7 +617,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 12
   },
-
   warningIconContainer: {
     width: 38,
     height: 38,
@@ -701,36 +626,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 12
   },
-
   warningIcon: {
     color: '#fff',
     fontSize: 19,
     fontWeight: 'bold'
   },
-
   warningContent: {
     flex: 1
   },
-
   warningTitle: {
     color: '#3730a3',
     fontWeight: 'bold',
     fontSize: 14
   },
-
   warningText: {
     color: '#4338ca',
     fontSize: 12,
     marginTop: 2
   },
-
-  // estadisticas
   statsRow: {
     flexDirection: 'row',
     gap: 10,
     marginBottom: 12
   },
-
   statCard: {
     flex: 1,
     backgroundColor: '#fff',
@@ -740,45 +658,36 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e2e8f0'
   },
-
   statPresent: {
     borderColor: '#86efac',
     backgroundColor: '#f0fdf4'
   },
-
   statAbsent: {
     borderColor: '#fca5a5',
     backgroundColor: '#fef2f2'
   },
-
   statLate: {
     borderColor: '#facc15',
     backgroundColor: '#fffbeb'
   },
-
   statLeft: {
     borderColor: '#818cf8',
     backgroundColor: '#eef2ff'
   },
-
   statPending: {
     borderColor: '#fde68a',
     backgroundColor: '#fffbeb'
   },
-
   statNumber: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#0f172a'
   },
-
   statLabel: {
     fontSize: 11,
     color: '#64748b',
     marginTop: 2
   },
-
-  // lista
   listContainer: {
     flex: 1,
     backgroundColor: '#fff',
@@ -787,32 +696,25 @@ const styles = StyleSheet.create({
     borderColor: '#e2e8f0',
     padding: 15
   },
-
   listHeader: {
     marginBottom: 10
   },
-
   listTitle: {
     fontSize: 19,
     fontWeight: 'bold',
     color: '#0f172a'
   },
-
   listSubtitle: {
     color: '#64748b',
     fontSize: 12,
     marginTop: 2
   },
-
   studentsScroll: {
     flex: 1
   },
-
   studentsContent: {
     paddingBottom: 10
   },
-
-  // alumno
   studentRow: {
     backgroundColor: '#f8fafc',
     borderWidth: 1,
@@ -824,38 +726,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between'
   },
-
   studentPresent: {
     backgroundColor: '#f0fdf4',
     borderColor: '#86efac'
   },
-
   studentAbsent: {
     backgroundColor: '#fef2f2',
     borderColor: '#fca5a5'
   },
-
   studentLate: {
     backgroundColor: '#fffbeb',
     borderColor: '#facc15'
   },
-
   studentLeft: {
     backgroundColor: '#eef2ff',
     borderColor: '#818cf8'
   },
-
   studentPending: {
     backgroundColor: '#f8fafc',
     borderColor: '#cbd5e1'
   },
-
   studentInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1
   },
-
   studentNumber: {
     width: 30,
     height: 30,
@@ -865,26 +760,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 10
   },
-
   studentNumberText: {
     color: '#3730a3',
     fontWeight: 'bold',
     fontSize: 12
   },
-
   studentName: {
     color: '#0f172a',
     fontSize: 14,
     fontWeight: 'bold'
   },
-
   studentDni: {
     color: '#64748b',
     fontSize: 11,
     marginTop: 2
   },
-
-  // estado
   statusBadge: {
     paddingHorizontal: 14,
     paddingVertical: 9,
@@ -893,80 +783,63 @@ const styles = StyleSheet.create({
     minWidth: 125,
     alignItems: 'center'
   },
-
   statusPresent: {
     backgroundColor: '#16a34a',
     borderColor: '#16a34a'
   },
-
   statusAbsent: {
     backgroundColor: '#dc2626',
     borderColor: '#dc2626'
   },
-
   statusLate: {
     backgroundColor: '#eab308',
     borderColor: '#eab308'
   },
-
   statusLeft: {
     backgroundColor: '#6366f1',
     borderColor: '#6366f1'
   },
-
   statusPending: {
     backgroundColor: '#e2e8f0',
     borderColor: '#cbd5e1'
   },
-
   statusText: {
     fontSize: 11,
     fontWeight: 'bold',
     color: '#334155'
   },
-
   statusTextLight: {
     color: '#fff'
   },
-
   statusTextDark: {
     color: '#422006'
   },
-
-  // vacios
   emptyStudents: {
     padding: 30,
     alignItems: 'center'
   },
-
   emptyStudentsIcon: {
     fontSize: 35,
     marginBottom: 8
   },
-
   emptyStudentsText: {
     color: '#64748b',
     fontStyle: 'italic',
     textAlign: 'center'
   },
-
-  // carga
   loadingContainer: {
     flex: 1,
     backgroundColor: '#f8fafc',
     justifyContent: 'center',
     alignItems: 'center'
   },
-
   loadingTitle: {
     fontSize: 22,
     fontWeight: 'bold',
     color: '#1e1b4b'
   },
-
   loadingText: {
     color: '#64748b',
     marginTop: 5
   }
->>>>>>> master
 });
