@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
@@ -11,7 +10,7 @@ import {
 
 import { supabase } from '../../api/supabase';
 
-export default function PorteriaScreen() {
+export default function MonitoreoScreen() {
   const [cursos, setCursos] = useState([]);
   const [alumnos, setAlumnos] = useState([]);
   const [asistencias, setAsistencias] = useState({});
@@ -464,24 +463,16 @@ export default function PorteriaScreen() {
           )}
         </View>
       </View>
-=======
-import React, { useContext } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { AuthContext } from '../../context/AuthContext';
-
-export default function MonitoreoScreen() {
-  const { logout } = useContext(AuthContext);
-  return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Panel de Monitoreo (Puerta)</Text>
-      <Button title="Cerrar Sesión" onPress={logout} />
->>>>>>> ac76309d5cda4f270450437ea06aeffb978042db
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-<<<<<<< HEAD
+  container: {
+    flex: 1,
+    backgroundColor: '#f8fafc'
+  },
+
   // header
   header: {
     height: 80,
@@ -961,8 +952,3 @@ const styles = StyleSheet.create({
     marginTop: 5
   }
 });
-=======
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
-  text: { fontSize: 20, fontWeight: 'bold', marginBottom: 20 }
-});
->>>>>>> ac76309d5cda4f270450437ea06aeffb978042db
